@@ -39,9 +39,9 @@ export default function CameraFormDialog({ open, onClose, onSubmit, camera, load
   const validate = () => {
     const next = {};
     if (!form.name.trim()) next.name = 'Name is required';
-    if (!form.rtsp_url.trim()) next.rtsp_url = 'RTSP URL is required';
-    else if (!/^rtsps?:\/\/.+/i.test(form.rtsp_url.trim())) {
-      next.rtsp_url = 'Must be a valid rtsp:// or rtsps:// URL';
+    if (!form.rtsp_url.trim()) next.rtsp_url = 'Stream URL is required';
+    else if (!/^(rtsps?:\/\/.+|webcam:\/\/\d+)$/i.test(form.rtsp_url.trim())) {
+      next.rtsp_url = 'Use rtsp://..., rtsps://..., or webcam://0';
     }
     if (!form.location.trim()) next.location = 'Location is required';
     setErrors(next);
@@ -75,11 +75,11 @@ export default function CameraFormDialog({ open, onClose, onSubmit, camera, load
               required
             />
             <TextField
-              label="RTSP URL"
+              label="Stream URL"
               value={form.rtsp_url}
               onChange={update('rtsp_url')}
               error={!!errors.rtsp_url}
-              helperText={errors.rtsp_url || 'e.g. rtsp://192.168.1.10:554/stream1'}
+              helperText={errors.rtsp_url || 'RTSP: rtsp://192.168.1.10:554/stream — Laptop: webcam://0'}
               fullWidth
               required
             />

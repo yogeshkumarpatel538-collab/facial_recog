@@ -10,6 +10,7 @@ from app.api.auth import router as auth_router
 from app.api.cameras import router as cameras_router
 from app.api.router import router
 from app.api.ws import get_websocket_manager, router as ws_router
+from app.database.session import init_db
 from app.core.config import settings
 from app.core.exception_handlers import register_exception_handlers
 from app.core.logging import get_logger, setup_logging
@@ -52,6 +53,7 @@ OPENAPI_TAGS = [
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
+    init_db()
     logger.info("Starting %s v%s [%s]", settings.app_name, __version__, settings.app_env)
 
     get_websocket_manager()

@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 from typing import Optional
 
@@ -6,6 +7,7 @@ import cv2
 import numpy as np
 
 from app.core.logging import get_logger
+from app.utils.validators import is_webcam_url
 
 logger = get_logger(__name__)
 
@@ -39,25 +41,35 @@ class StreamReader:
 
     def open(self) -> bool:
         self.release()
-        self._configure_rtsp_transport()
 
-        logger.info(
-            "Opening RTSP stream for camera_id=%s url=%s transport=%s",
-            self.camera_id,
-            self._safe_url(),
-            self.rtsp_transport,
-        )
+        if is_webcam_url(self.rtsp_url):
+            device_index = int(self.rtsp_url.rsplit("/", 1)[-1])
+            logger.info(
+                "Opening webcam for camera_id=%s device_index=%s",
+                self.camera_id,
+                device_index,
+            )
+            backend = cv2.CAP_DSHOW if sys.platform == "win32" else cv2.CAP_ANY
+            capture = cv2.VideoCapture(device_index, backend)
+        else:
+            self._configure_rtsp_transport()
+            logger.info(
+                "Opening RTSP stream for camera_id=%s url=%s transport=%s",
+                self.camera_id,
+                self._safe_url(),
+                self.rtsp_transport,
+            )
+            capture = cv2.VideoCapture(self.rtsp_url, cv2.CAP_FFMPEG)
 
-        capture = cv2.VideoCapture(self.rtsp_url, cv2.CAP_FFMPEG)
         if not capture.isOpened():
-            logger.error("Failed to open RTSP stream for camera_id=%s", self.camera_id)
+            logger.error("Failed to open stream for camera_id=%s", self.camera_id)
             capture.release()
             return False
 
         capture.set(cv2.CAP_PROP_BUFFERSIZE, self.buffer_size)
         self._capture = capture
         self._consecutive_failures = 0
-        logger.info("RTSP stream opened for camera_id=%s", self.camera_id)
+        logger.info("Stream opened for camera_id=%s", self.camera_id)
         return True
 
     def read(self) -> Optional[np.ndarray]:

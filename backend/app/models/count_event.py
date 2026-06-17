@@ -27,7 +27,7 @@ class CountEvent(Base):
     )
     track_id: Mapped[str] = mapped_column(String(64), nullable=False)
     direction: Mapped[Direction] = mapped_column(
-        Enum(Direction, name="direction_enum"),
+        Enum(Direction, name="direction_enum", native_enum=False),
         nullable=False,
     )
     timestamp: Mapped[datetime] = mapped_column(

@@ -23,7 +23,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"
     port: int = 8000
 
-    database_url: str = "postgresql://postgres:postgres@localhost:5432/people_counting"
+    database_url: str = "sqlite:///./people_counting.db"
 
     secret_key: str = "change-me-to-a-random-secret-key"
     access_token_expire_minutes: int = 30

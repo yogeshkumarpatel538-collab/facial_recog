@@ -18,8 +18,8 @@ class CameraBase(BaseModel):
         ...,
         min_length=1,
         max_length=512,
-        description="RTSP stream URL (rtsp:// or rtsps://)",
-        examples=["rtsp://192.168.1.10:554/stream1"],
+        description="Stream URL: rtsp://..., rtsps://..., or webcam://0 for laptop camera",
+        examples=["rtsp://192.168.1.10:554/stream1", "webcam://0"],
     )
     location: str = Field(
         ...,
